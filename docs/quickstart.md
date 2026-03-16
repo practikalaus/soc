@@ -3,7 +3,9 @@
 This guide installs the SOC stack using the Practikal IT Solutions SOC GitHub repository as the entry point.
 
 ## One-liner (all-in-one)
-Run this on a fresh supported Linux host:
+Run this on a fresh supported Linux host, from an empty working directory (recommended):
+
+- `mkdir -p ~/soc-install && cd ~/soc-install`
 
 - `curl -fsSLO https://raw.githubusercontent.com/practikalaus/soc/main/installer/soc-quickstart.sh && sudo bash ./soc-quickstart.sh -a`
 

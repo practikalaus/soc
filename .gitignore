@@ -14,5 +14,10 @@ soc-install-files.tar
 soc-install-files/
 soc-install-files.tar.*
 
+# Quickstart artifacts if run from inside a cloned repo
+/soc-install.sh
+/soc-quickstart.sh
+/config.yml
+
 # editor
 .vscode/
