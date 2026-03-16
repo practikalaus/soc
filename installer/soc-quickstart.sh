@@ -155,13 +155,8 @@ if [[ "${EUID}" -eq 0 ]] && command -v systemctl >/dev/null 2>&1; then
     local target_unit="$2"  # wazuh-indexer.service
 
     local target_path=""
-    if [[ -f "/usr/lib/systemd/system/${target_unit}" ]]; then
-      target_path="/usr/lib/systemd/system/${target_unit}"
-    elif [[ -f "/lib/systemd/system/${target_unit}" ]]; then
-      target_path="/lib/systemd/system/${target_unit}"
-    fi
-
-    if [[ -n "${target_path}" ]]; then
+    target_path="$(systemctl show -p FragmentPath "${target_unit}" --no-pager 2>/dev/null | sed 's/^FragmentPath=//')"
+    if [[ -n "${target_path}" && -f "${target_path}" ]]; then
       ln -sf "${target_path}" "${unit_dir}/${alias_unit}"
     fi
   }

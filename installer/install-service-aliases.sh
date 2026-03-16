@@ -24,11 +24,8 @@ link_unit() {
   local target_unit="$2"     # wazuh-indexer.service
 
   local target_path
-  if [[ -f "/usr/lib/systemd/system/${target_unit}" ]]; then
-    target_path="/usr/lib/systemd/system/${target_unit}"
-  elif [[ -f "/lib/systemd/system/${target_unit}" ]]; then
-    target_path="/lib/systemd/system/${target_unit}"
-  else
+  target_path="$(systemctl show -p FragmentPath "${target_unit}" --no-pager 2>/dev/null | sed 's/^FragmentPath=//')"
+  if [[ -z "${target_path}" || ! -f "${target_path}" ]]; then
     echo "Target unit not found on disk: ${target_unit}" >&2
     return 1
   fi
