@@ -1403,11 +1403,11 @@ function manager_configure(){
     common_logger -d "Setting provisional Wazuh indexer password."
     eval "/var/ossec/bin/wazuh-keystore -f indexer -k username -v admin"
     eval "/var/ossec/bin/wazuh-keystore -f indexer -k password -v admin"
-    common_logger "Wazuh manager vulnerability detection configuration finished."
+    common_logger "SOC manager vulnerability detection configuration finished."
 }
 function manager_install() {
 
-    common_logger "Starting the Wazuh manager installation."
+    common_logger "Starting SOC manager installation."
     if [ "${sys_type}" == "yum" ]; then
         installCommon_yumInstall "wazuh-manager" "${wazuh_version}-*"
     elif [ "${sys_type}" == "apt-get" ]; then
@@ -1420,7 +1420,7 @@ function manager_install() {
         installCommon_rollBack
         exit 1
     else
-        common_logger "Wazuh manager installation finished."
+        common_logger "SOC manager installation finished."
     fi
 }
 
@@ -1604,7 +1604,7 @@ function indexer_configure() {
         echo -ne "\nbootstrap.system_call_filter: false" >> /etc/wazuh-indexer/opensearch.yml
     fi
 
-    common_logger "Wazuh indexer post-install configuration finished."
+    common_logger "SOC indexer post-install configuration finished."
 }
 function indexer_copyCertificates() {
 
@@ -1639,7 +1639,7 @@ function indexer_copyCertificates() {
 }
 function indexer_initialize() {
 
-    common_logger "Initializing Wazuh indexer cluster security settings."
+    common_logger "Initializing SOC indexer cluster security settings."
     eval "common_curl -XGET https://"${indexer_node_ips[pos]}":9200/ -uadmin:admin -k --max-time 120 --silent --output /dev/null"
     e_code="${PIPESTATUS[0]}"
 
@@ -1656,7 +1656,7 @@ function indexer_initialize() {
             installCommon_rollBack
             exit 1
         else
-            common_logger "Wazuh indexer cluster security configuration initialized."
+            common_logger "SOC indexer cluster security configuration initialized."
         fi
     fi
 
@@ -1664,12 +1664,12 @@ function indexer_initialize() {
         installCommon_changePasswords
     fi
 
-    common_logger "Wazuh indexer cluster initialized."
+    common_logger "SOC indexer cluster initialized."
 
 }
 function indexer_install() {
 
-    common_logger "Starting Wazuh indexer installation."
+    common_logger "Starting SOC indexer installation."
 
     if [ "${sys_type}" == "yum" ]; then
         installCommon_yumInstall "wazuh-indexer" "${wazuh_version}-*"
@@ -1683,7 +1683,7 @@ function indexer_install() {
         installCommon_rollBack
         exit 1
     else
-        common_logger "Wazuh indexer installation finished."
+        common_logger "SOC indexer installation finished."
     fi
 
     eval "sysctl -q -w vm.max_map_count=262144 ${debug}"
@@ -1709,7 +1709,7 @@ function indexer_startCluster() {
         installCommon_rollBack
         exit 1
     else
-        common_logger "Wazuh indexer cluster security configuration initialized."
+        common_logger "SOC indexer cluster security configuration initialized."
     fi
 
     # Validate Wazuh indexer security admin it is initialized
@@ -2319,7 +2319,7 @@ function installCommon_removeCentOSrepositories() {
 function installCommon_rollBack() {
 
     if [ -z "${uninstall}" ]; then
-        common_logger "--- Removing existing Wazuh installation ---"
+        common_logger "--- Removing existing SOC installation ---"
     fi
 
     if [ -f "/etc/yum.repos.d/wazuh.repo" ]; then
@@ -2331,7 +2331,7 @@ function installCommon_rollBack() {
     fi
 
     if [[ -n "${wazuh_installed}" && ( -n "${wazuh}" || -n "${AIO}" || -n "${uninstall}" ) ]];then
-        common_logger "Removing Wazuh manager."
+        common_logger "Removing SOC manager."
         if [ "${sys_type}" == "yum" ]; then
             common_checkYumLock
             if [ "${attempt}" -ne "${max_attempts}" ]; then
@@ -2347,7 +2347,7 @@ function installCommon_rollBack() {
         if [ -n "${wazuh_failed_uninstall}" ]; then
             common_logger -w "The Wazuh manager package could not be removed."
         else
-            common_logger "Wazuh manager removed."
+            common_logger "SOC manager removed."
         fi
 
     fi
@@ -2357,7 +2357,7 @@ function installCommon_rollBack() {
     fi
 
     if [[ -n "${indexer_installed}" && ( -n "${indexer}" || -n "${AIO}" || -n "${uninstall}" ) ]]; then
-        common_logger "Removing Wazuh indexer."
+        common_logger "Removing SOC indexer."
         if [ "${sys_type}" == "yum" ]; then
             common_checkYumLock
             if [ "${attempt}" -ne "${max_attempts}" ]; then
@@ -2373,7 +2373,7 @@ function installCommon_rollBack() {
         if [ -n "${indexer_failed_uninstall}" ]; then
             common_logger -w "The Wazuh indexer package could not be removed."
         else
-            common_logger "Wazuh indexer removed."
+            common_logger "SOC indexer removed."
         fi
     fi
 
@@ -2411,7 +2411,7 @@ function installCommon_rollBack() {
     fi
 
     if [[ -n "${dashboard_installed}" && ( -n "${dashboard}" || -n "${AIO}" || -n "${uninstall}" ) ]]; then
-        common_logger "Removing Wazuh dashboard."
+        common_logger "Removing SOC dashboard."
         if [ "${sys_type}" == "yum" ]; then
             common_checkYumLock
             if [ "${attempt}" -ne "${max_attempts}" ]; then
@@ -2427,7 +2427,7 @@ function installCommon_rollBack() {
         if [ -n "${dashboard_failed_uninstall}" ]; then
             common_logger -w "The Wazuh dashboard package could not be removed."
         else
-            common_logger "Wazuh dashboard removed."
+            common_logger "SOC dashboard removed."
         fi
     fi
 
@@ -2900,7 +2900,7 @@ function dashboard_configure() {
 
     sed -i 's/server\.port: [0-9]\+$/server.port: '"${chosen_port}"'/' /etc/wazuh-dashboard/opensearch_dashboards.yml
 
-    common_logger "Wazuh dashboard post-install configuration finished."
+    common_logger "SOC dashboard post-install configuration finished."
 
 }
 function dashboard_copyCertificates() {
@@ -2935,7 +2935,7 @@ function dashboard_copyCertificates() {
 }
 function dashboard_initialize() {
 
-    common_logger "Initializing Wazuh dashboard web application."
+    common_logger "Initializing SOC dashboard web application."
     installCommon_getPass "admin"
     j=0
 
@@ -2951,7 +2951,7 @@ function dashboard_initialize() {
     fi
 
     if [ "${nodes_dashboard_ip}" == "localhost" ] || [[ "${nodes_dashboard_ip}" == 127.* ]]; then
-        print_ip="<wazuh-dashboard-ip>"
+        print_ip="<soc-dashboard-ip>"
     else
         print_ip="${nodes_dashboard_ip}"
     fi
@@ -2977,7 +2977,7 @@ function dashboard_initialize() {
             eval "sed -i 's,url: https://localhost,url: https://${wazuh_api_address},g' /usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml ${debug}"
         fi
 
-        common_logger "Wazuh dashboard web application initialized."
+        common_logger "SOC dashboard web application initialized."
         common_logger -nl "--- Summary ---"
         common_logger -nl "You can access the web interface https://${print_ip}:${http_port}\n    User: admin\n    Password: ${u_pass}"
 
@@ -3021,7 +3021,7 @@ function dashboard_initialize() {
 function dashboard_initializeAIO() {
 
     wazuh_api_address=${server_node_ips[0]}
-    common_logger "Initializing Wazuh dashboard web application."
+    common_logger "Initializing SOC dashboard web application."
     installCommon_getPass "admin"
     http_code=$(curl -XGET https://localhost:"${http_port}"/status -uadmin:"${u_pass}" -k -w %"{http_code}" -s -o /dev/null)
     retries=0
@@ -3037,9 +3037,9 @@ function dashboard_initializeAIO() {
         if [ -f "/usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml" ]; then
             eval "sed -i 's,url: https://localhost,url: https://${wazuh_api_address},g' /usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml ${debug}"
         fi
-        common_logger "Wazuh dashboard web application initialized."
+        common_logger "SOC dashboard web application initialized."
         common_logger -nl "--- Summary ---"
-        common_logger -nl "You can access the web interface https://<wazuh-dashboard-ip>:${http_port}\n    User: admin\n    Password: ${u_pass}"
+        common_logger -nl "You can access the web interface https://<soc-dashboard-ip>:${http_port}\n    User: admin\n    Password: ${u_pass}"
     else
         common_logger -e "Wazuh dashboard installation failed."
         installCommon_rollBack
@@ -3048,7 +3048,7 @@ function dashboard_initializeAIO() {
 }
 function dashboard_install() {
 
-    common_logger "Starting Wazuh dashboard installation."
+    common_logger "Starting SOC dashboard installation."
     if [ "${sys_type}" == "yum" ]; then
         installCommon_yumInstall "wazuh-dashboard" "${wazuh_version}-*"
     elif [ "${sys_type}" == "apt-get" ]; then
@@ -3060,7 +3060,7 @@ function dashboard_install() {
         installCommon_rollBack
         exit 1
     else
-        common_logger "Wazuh dashboard installation finished."
+        common_logger "SOC dashboard installation finished."
     fi
 
 }
@@ -3203,15 +3203,15 @@ function checks_arguments() {
         fi
 
         if  [ -z "${overwrite}" ] && { [ -n "${wazuh_installed}" ] || [ -n "${wazuh_remaining_files}" ]; }; then
-            common_logger -e "Wazuh manager already installed."
+            common_logger -e "SOC manager already installed."
             installedComponent=1
         fi
         if [ -z "${overwrite}" ] && { [ -n "${indexer_installed}" ] || [ -n "${indexer_remaining_files}" ]; };then
-            common_logger -e "Wazuh indexer already installed."
+            common_logger -e "SOC indexer already installed."
             installedComponent=1
         fi
         if [ -z "${overwrite}" ] && { [ -n "${dashboard_installed}" ] || [ -n "${dashboard_remaining_files}" ]; }; then
-            common_logger -e "Wazuh dashboard already installed."
+            common_logger -e "SOC dashboard already installed."
             installedComponent=1
         fi
         if [ -z "${overwrite}" ] && { [ -n "${filebeat_installed}" ] || [ -n "${filebeat_remaining_files}" ]; }; then

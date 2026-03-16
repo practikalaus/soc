@@ -144,3 +144,32 @@ printf '%s\n' "${SOC_BRAND_TITLE}: running SOC installer (./soc-install.sh ${for
 
 # Execute upstream logic with your args
 bash ./soc-install.sh "${forward_args[@]}"
+
+# Create SOC systemd service aliases (so operators can use soc-* names)
+if [[ "${EUID}" -eq 0 ]] && command -v systemctl >/dev/null 2>&1; then
+  unit_dir="/etc/systemd/system"
+  mkdir -p "${unit_dir}"
+
+  link_alias() {
+    local alias_unit="$1"   # soc-indexer.service
+    local target_unit="$2"  # wazuh-indexer.service
+
+    local target_path=""
+    if [[ -f "/usr/lib/systemd/system/${target_unit}" ]]; then
+      target_path="/usr/lib/systemd/system/${target_unit}"
+    elif [[ -f "/lib/systemd/system/${target_unit}" ]]; then
+      target_path="/lib/systemd/system/${target_unit}"
+    fi
+
+    if [[ -n "${target_path}" ]]; then
+      ln -sf "${target_path}" "${unit_dir}/${alias_unit}"
+    fi
+  }
+
+  link_alias soc-indexer.service wazuh-indexer.service
+  link_alias soc-manager.service wazuh-manager.service
+  link_alias soc-dashboard.service wazuh-dashboard.service
+  systemctl daemon-reload
+
+  printf '%s\n' "${SOC_BRAND_TITLE}: SOC service aliases installed (soc-indexer, soc-manager, soc-dashboard)"
+fi

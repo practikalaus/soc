@@ -70,6 +70,7 @@ fi
 IN_FILE="${in_file}" OUT_FILE="${out_file}" SOC_BRAND_TITLE="${SOC_BRAND_TITLE}" \
 python3 - <<'PY'
 import os
+import re
 
 in_file = os.environ["IN_FILE"]
 out_file = os.environ["OUT_FILE"]
@@ -103,6 +104,41 @@ src = src.replace('common_logger "Wazuh installation assistant version: ${wazuh_
 # Also brand the normal startup message.
 src = src.replace('common_logger "Starting Wazuh installation assistant. Wazuh version:',
                   'common_logger "Starting SOC installer. SOC baseline (Wazuh) version:')
+
+# 3c) Reduce Wazuh naming in common log labels (messages only).
+# Keep baseline identifiers where important; avoid changing service/package/path names.
+log_replacements = {
+  '--- Removing existing Wazuh installation ---': '--- Removing existing SOC installation ---',
+  'Removing Wazuh manager.': 'Removing SOC manager.',
+  'Removing Wazuh indexer.': 'Removing SOC indexer.',
+  'Removing Wazuh dashboard.': 'Removing SOC dashboard.',
+  'Wazuh manager removed.': 'SOC manager removed.',
+  'Wazuh indexer removed.': 'SOC indexer removed.',
+  'Wazuh dashboard removed.': 'SOC dashboard removed.',
+  'Starting Wazuh indexer installation.': 'Starting SOC indexer installation.',
+  'Wazuh indexer installation finished.': 'SOC indexer installation finished.',
+  'Wazuh indexer post-install configuration finished.': 'SOC indexer post-install configuration finished.',
+  'Initializing Wazuh indexer cluster security settings.': 'Initializing SOC indexer cluster security settings.',
+  'Wazuh indexer cluster security configuration initialized.': 'SOC indexer cluster security configuration initialized.',
+  'Wazuh indexer cluster initialized.': 'SOC indexer cluster initialized.',
+  'Starting the Wazuh manager installation.': 'Starting SOC manager installation.',
+  'Wazuh manager installation finished.': 'SOC manager installation finished.',
+  'Wazuh manager vulnerability detection configuration finished.': 'SOC manager vulnerability detection configuration finished.',
+  'Starting Wazuh dashboard installation.': 'Starting SOC dashboard installation.',
+  'Wazuh dashboard installation finished.': 'SOC dashboard installation finished.',
+  'Wazuh dashboard post-install configuration finished.': 'SOC dashboard post-install configuration finished.',
+  'Initializing Wazuh dashboard web application.': 'Initializing SOC dashboard web application.',
+  'Wazuh dashboard web application initialized.': 'SOC dashboard web application initialized.',
+  'Wazuh manager already installed.': 'SOC manager already installed.',
+  'Wazuh indexer already installed.': 'SOC indexer already installed.',
+  'Wazuh dashboard already installed.': 'SOC dashboard already installed.',
+}
+
+for old, new in log_replacements.items():
+  src = src.replace(old, new)
+
+# Placeholder in the final summary output
+src = src.replace('<wazuh-dashboard-ip>', '<soc-dashboard-ip>')
 
 # 4) Add a small brand banner at the start of main() after root check (best-effort, safe)
 # Insert after: common_logger "Verbose logging redirected to ${logfile}"
