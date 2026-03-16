@@ -138,16 +138,19 @@ for f in "${candidates[@]}"; do
     from="${from_list[i]}"
     to="${to_list[i]}"
     # Use python for safe literal replacement
-    python3 - <<PY
-import io
-import os
-p = ${tmp!r}
-from_s = ${from!r}
-to_s = ${to!r}
-with open(p,'r',encoding='utf-8',errors='replace') as fh:
+    python3 - "$tmp" "$from" "$to" <<'PY'
+import sys
+
+p = sys.argv[1]
+from_s = sys.argv[2]
+to_s = sys.argv[3]
+
+with open(p, 'r', encoding='utf-8', errors='replace') as fh:
     data = fh.read()
+
 new = data.replace(from_s, to_s)
-with open(p,'w',encoding='utf-8') as fh:
+
+with open(p, 'w', encoding='utf-8') as fh:
     fh.write(new)
 PY
   done
