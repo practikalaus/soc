@@ -1,0 +1,18 @@
+# local build / work artifacts
+installer/upstream/**/wazuh-install.sh
+installer/work/
+*.log
+
+# Wazuh generated artifacts
+# (legacy) wazuh-install-files.tar
+wazuh-install-files.tar
+wazuh-install-files/
+wazuh-install-files.tar.*
+
+# SOC generated artifacts
+soc-install-files.tar
+soc-install-files/
+soc-install-files.tar.*
+
+# editor
+.vscode/
