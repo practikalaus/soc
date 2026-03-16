@@ -15,6 +15,12 @@ It intentionally **does not fork or copy** upstream Wazuh installers/packages. I
 - `docs/` — internal notes/runbooks
 
 ## Quick start
+For the GitHub-driven one-liner (similar to upstream quickstart), see docs/quickstart.md.
+
+All-in-one (single node):
+
+- `curl -fsSLO https://raw.githubusercontent.com/practikalaus/soc/main/installer/soc-quickstart.sh && sudo bash ./soc-quickstart.sh -a`
+
 1) Fetch upstream assistant + default config:
 
 - `cd installer && ./fetch-upstream.sh --major 4.14`
