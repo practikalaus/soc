@@ -33,3 +33,13 @@ To pin the baseline major stream:
 ## Notes / constraints
 - Underlying packages/services/paths are still the baseline names for compatibility (this is intentional).
 - For multi-node installs (separate indexer/server/dashboard), use the repo workflow described in the root README and the `installer/run-soc.sh` wrapper.
+
+## If you see “already installed” errors
+If you run the all-in-one quickstart (`-a`) on a host that already has the baseline components installed, the installer will refuse to proceed.
+
+Options:
+- Use a fresh host (recommended).
+- If you intentionally want to wipe and reinstall, add `-o` / `--overwrite`:
+	- `curl -fsSLO https://raw.githubusercontent.com/practikalaus/soc/main/installer/soc-quickstart.sh && sudo bash ./soc-quickstart.sh -a -o`
+
+Warning: `-o/--overwrite` erases existing configuration and data.

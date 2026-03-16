@@ -82,9 +82,14 @@ with open(in_file, 'r', encoding='utf-8', errors='replace') as f:
 src = src.replace('readonly tar_file_name="wazuh-install-files.tar"',
                   'readonly tar_file_name="soc-install-files.tar"')
 
-# 2) Change default log file name (use /tmp so --help/--version work without root)
-src = src.replace('readonly logfile="/var/log/wazuh-install.log"',
-                  'readonly logfile="/tmp/soc-install.log"')
+# 2) Change default log file name.
+# - When running as root (normal installs): /var/log/soc-install.log
+# - When running as non-root (--help/--version): /tmp/soc-install-<uid>.log
+# This avoids sticky-dir hardening issues when root tries to append to a user-owned file.
+src = src.replace(
+  'readonly logfile="/var/log/wazuh-install.log"',
+  'logfile="/tmp/soc-install-${UID}.log"\nif [ "${EUID}" -eq 0 ]; then\n  logfile="/var/log/soc-install.log"\nfi\nreadonly logfile'
+)
 
 # 3) Update help text that hardcodes tar name (keep other technical strings intact)
 src = src.replace('wazuh-install-files.tar', 'soc-install-files.tar')

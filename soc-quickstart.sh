@@ -93,10 +93,8 @@ with open(in_file, "r", encoding="utf-8", errors="replace") as f:
 # Tar/log naming
 src = src.replace('readonly tar_file_name="wazuh-install-files.tar"',
                   'readonly tar_file_name="soc-install-files.tar"')
-src = src.replace(
-  'readonly logfile="/var/log/wazuh-install.log"',
-  'logfile="/tmp/soc-install-${UID}.log"\nif [ "${EUID}" -eq 0 ]; then\n  logfile="/var/log/soc-install.log"\nfi\nreadonly logfile'
-)
+src = src.replace('readonly logfile="/var/log/wazuh-install.log"',
+                  'readonly logfile="/tmp/soc-install.log"')
 
 # Help text references
 src = src.replace('wazuh-install-files.tar', 'soc-install-files.tar')
